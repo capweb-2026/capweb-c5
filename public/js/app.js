@@ -1,67 +1,78 @@
 import { validateMessage, replyTo } from './brain.js';
 import { renderMessages } from './view.js';
 
-const formulaire = document.querySelector("#chat-form");
-const statut = document.querySelector("#status");
-const versionElt = document.querySelector("#version");
-const champ = document.querySelector("#message");
-const liste = document.querySelector("#messages");
-const boutonEffacer = document.querySelector("#effacer");
-const CLE_HISTORIQUE = "capweb.historique";
-const historique = [];
+const formulaire = document.querySelector('#chat-form');
+const statut = document.querySelector('#status');
+const versionElt = document.querySelector('#version');
+const champ = document.querySelector('#message');
+const liste = document.querySelector('#messages');
+const effacer = document.querySelector('#effacer');
 
-function sauvegarder() {
-  localStorage.setItem(CLE_HISTORIQUE, JSON.stringify(historique));
-}
+const historique = []
 
-const brut = localStorage.getItem(CLE_HISTORIQUE);
-if (brut) {
-  try {
-    const donnees = JSON.parse(brut);
-    if (Array.isArray(donnees)) {
-      historique.push(...donnees);
-      renderMessages(historique, liste);
+const sauvegarde = localStorage.getItem('capweb.historique');
+
+if (sauvegarde) {
+    try {
+        const messages = JSON.parse(sauvegarde);
+        historique.push(...messages);
+    } catch (erreur) {
+        statut.textContent = 'Impossible de charger la conversation sauvegardée.';
     }
-  } catch {
-    statut.textContent = "La conversation enregistrée était illisible, elle a été ignorée";
-  }
 }
 
-formulaire?.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const resultat = validateMessage(champ.value);
+renderMessages(historique, liste);
 
-  if (!resultat.ok) {
-    statut.textContent = resultat.error;
+formulaire?.addEventListener('submit', (event) => {
+
+    event.preventDefault();
+
+    const resultat = validateMessage(champ.value);
+
+    if (!resultat.ok) {
+        statut.textContent = resultat.error;
+        champ.focus();
+        return;
+    }
+
+    const texte = resultat.value;
+
+    historique.push({
+        role: 'user',
+        text: texte
+    });
+
+    const reponse = replyTo(texte);
+
+    historique.push({
+        role: 'assistant',
+        text: reponse
+    });
+
+    localStorage.setItem('capweb.historique', JSON.stringify(historique))
+
+    renderMessages(historique, liste);
+
+    champ.value = '';
+    statut.textContent = '';
     champ.focus();
-    return;
-  }
-
-  historique.push({ role: "user", text: resultat.value });
-  historique.push({ role: "assistant", text: replyTo(resultat.value) });
-  renderMessages(historique, liste);
-  sauvegarder();
-
-  champ.value = "";
-  statut.textContent = "";
-  champ.focus();
 });
 
-boutonEffacer?.addEventListener("click", () => {
-  if (!confirm("Effacer toute la conversation ?")) {
-    return;
-  }
-  historique.length = 0;
-  localStorage.removeItem(CLE_HISTORIQUE);
-  renderMessages(historique, liste);
+effacer?.addEventListener('click', () => {
+    if (confirm('Voulez-vous vraiment effacer la conversation ?')) {
+        historique.length = 0;
+        localStorage.removeItem('capweb.historique');
+        renderMessages(historique, liste);
+    }
 });
+
 
 // Version du serveur local, échec discret si indisponible.
-fetch("/version.json", { headers: { accept: "application/json" } })
-  .then((reponse) => (reponse.ok ? reponse.json() : null))
-  .then((donnees) => {
-    if (donnees && typeof donnees.version === "string" && versionElt) {
-      versionElt.textContent = `version ${donnees.version}`;
-    }
-  })
-  .catch(() => {});
+fetch('/version.json', { headers: { accept: 'application/json' } })
+    .then((reponse) => (reponse.ok ? reponse.json() : null))
+    .then((donnees) => {
+        if (donnees && typeof donnees.version === 'string' && versionElt) {
+            versionElt.textContent = `version ${donnees.version}`;
+        }
+    })
+    .catch(() => { });

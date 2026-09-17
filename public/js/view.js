@@ -1,9 +1,15 @@
 export function renderMessages(messages, container) {
-  const lignes = messages.map((msg) => {
-    const li = document.createElement('li');
-    const etiquette = msg.role === 'user' ? 'Vous' : 'Cap Web';
-    li.textContent = `${etiquette} : ${msg.text}`;
-    return li;
-  });
-  container.replaceChildren(...lignes);
+    const lignes = messages.map((msg) => {
+        const li = document.createElement('li');
+
+        if (msg.role === 'user') {
+            li.textContent = `Vous : ${msg.text}`;
+        } else {
+            li.textContent = `Cap Web : ${msg.text}`;
+        }
+
+        return li;
+    });
+
+    container.replaceChildren(...lignes);
 }
