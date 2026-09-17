@@ -4,18 +4,23 @@
 
 Cavalier est un coach d'échecs pour débutants. Il aide l'utilisateur à découvrir les règles et les premières notions des échecs avec des réponses simples, courtes et adaptées à une première partie.
 
+## Comment on compte les emojis
+
+Un emoji est une suite de caractères `Extended_Pictographic` avec ses modificateurs, sélecteur de variation `U+FE0F` compris. On ne compte pas les unités de code : « ♟️ » (`'♟️'.length` vaut 2) et « 🛡️ » (`'🛡️'.length` vaut 3) comptent chacun pour **un seul** emoji.
+
 ## Critères d'acceptation
 
-Rédigez chaque critère sous la forme « Quand …, le système … ». Numérotez-les : les tests et les PR y feront référence.
+1. **Nom** — Quand la page s'ouvre, le système affiche le nom « Cavalier » dans le titre principal `h1`. Un nom est valide quand, les espaces de début et de fin retirés, il compte de 2 à 20 caractères : 2 et 20 caractères sont acceptés, 1 et 21 sont refusés. Un nom vide, composé uniquement d'espaces, ou qui n'est pas une chaîne de caractères, est refusé.
 
-1. **Nom** — Quand la page s'ouvre, le système affiche le nom « Cavalier » dans le titre principal. Le nom, sans les espaces autour, fait de 2 à 20 caractères.
-2. **Emoji** — Quand la page s'ouvre, le système affiche exactement un emoji de cavalier, « ♞ », à côté du nom. Cet emoji compte pour un seul emoji visible.
-3. **Accueil** — Quand la conversation est vide, le système affiche le message « Bonjour, je suis Cavalier, ton coach d'échecs pour débutants. » Le message contient le nom « Cavalier », n'est pas une ligne de `#messages`, disparaît dès le premier message envoyé et revient quand la conversation est effacée.
-4. **Suggestions** — Quand la page s'ouvre, le système propose exactement trois questions : « Comment déplacer les pièces ? », « Comment faire échec et mat ? » et « Quelle ouverture apprendre en premier ? ». Quand l'utilisateur clique sur une suggestion, le système la place dans le champ de saisie sans l'envoyer.
-5. **Réponses signées** — Quand l'assistant répond, sa ligne commence par « Cavalier » au lieu de « Cap Web ».
-6. **Contrat** — Quand les fonctionnalités de l'identité sont ajoutées, les tests de contrat CP1 restent verts.
+2. **Emoji** — Quand la page s'ouvre, le système affiche l'emoji « ♟️ » dans le titre principal `h1`, à côté du nom. Un emoji est valide quand il contient exactement un emoji au sens de la section « Comment on compte les emojis » : « ♟️ » est accepté, « ♟️♟️ » est refusé, « ♟️ Cavalier » est refusé, une chaîne sans emoji est refusée, une chaîne vide est refusée.
 
-Pour chaque critère, un test doit pouvoir échouer si le critère n'est pas respecté.
+3. **Accueil** — Quand la conversation est vide, le système affiche « Bonjour, je suis Cavalier, ton coach d'échecs pour débutants. » dans l'élément `#accueil`, qui est en dehors de `#messages` ; `#messages` ne contient alors aucune ligne. Un accueil est valide quand il contient le nom : un accueil qui ne contient pas « Cavalier » est refusé. Quand l'utilisateur envoie son premier message, le système masque `#accueil`. Quand la conversation est effacée, le système affiche `#accueil` de nouveau.
+
+4. **Suggestions** — Quand la page s'ouvre, le système affiche dans `#suggestions`, en dehors de `#messages`, exactement trois boutons portant dans cet ordre « Comment déplacer les pièces ? », « Comment faire échec et mat ? » et « Quelle ouverture apprendre en premier ? ». Une liste de suggestions est valide quand elle compte exactement trois textes non vides : deux suggestions sont refusées, quatre suggestions sont refusées, une suggestion vide ou faite d'espaces est refusée. Quand l'utilisateur clique sur une suggestion, le système écrit son texte dans `#message` et n'envoie pas le formulaire : `#messages` ne gagne aucune ligne.
+
+5. **Réponses signées** — Quand l'assistant répond, le système étiquette sa ligne « Cavalier ». Les lignes de l'utilisateur gardent l'étiquette « Vous ». Aucune ligne affichée ne contient « Cap Web ».
+
+6. **Contrat** — Quand l'identité est en place, les tests de contrat CP1 de `tests/contrat/` et de `browser/contrat.spec.js` restent verts, sans qu'aucun de ces fichiers ait été modifié.
 
 ## Hors périmètre
 
@@ -27,13 +32,13 @@ Pour chaque critère, un test doit pouvoir échouer si le critère n'est pas res
 
 ## Données et fonctions attendues
 
-- `public/js/persona.js` exporte `persona = { nom, emoji, accueil, suggestions }` avec les valeurs définies dans cette spec.
-- `public/js/persona.js` exporte `validatePersona(persona)`, qui renvoie `{ ok: true }` pour une identité valide ou `{ ok: false, erreurs: [texte, ...] }` pour une identité invalide.
-- `validatePersona` refuse un nom de moins de 2 ou de plus de 20 caractères après suppression des espaces autour, un nom vide, une valeur qui n'est pas du texte, un affichage qui ne contient pas exactement un emoji, un accueil qui ne contient pas le nom, une liste différente de trois suggestions et une suggestion vide.
-- `public/index.html` contient un élément `#accueil` et un conteneur `#suggestions`, tous deux en dehors de `#messages`.
-- `public/js/view.js` affiche l'identité, l'accueil et les suggestions avec `textContent` et crée les boutons des suggestions.
-- `public/js/app.js` affiche l'accueil au démarrage, place une suggestion dans `#message` sans envoyer le formulaire et utilise le nom de `persona` pour identifier les réponses de l'assistant.
-- `persona.js` est ajouté aux listes blanches et aux types autorisés de `server/app.js`.
+- `public/js/persona.js` exporte `persona = { nom, emoji, accueil, suggestions }` avec `nom = 'Cavalier'`, `emoji = '♟️'`, `accueil` = « Bonjour, je suis Cavalier, ton coach d'échecs pour débutants. » et `suggestions` = les trois questions du critère 4, dans l'ordre.
+- `public/js/persona.js` exporte `validatePersona(persona)`, fonction pure, qui renvoie `{ ok: true }` pour une identité valide, ou `{ ok: false, erreurs: [texte, ...] }` avec au moins une erreur pour une identité invalide, selon les règles des critères 1 à 4.
+- `public/js/persona.js` exporte `compterEmojis(texte)`, fonction pure, qui renvoie le nombre d'emojis du texte au sens de la section « Comment on compte les emojis » : `compterEmojis('♟️')` vaut `1`, `compterEmojis('♟️♟️')` vaut `2`, `compterEmojis('Cavalier')` vaut `0`.
+- `public/index.html` contient un `h1` qui porte le nom et l'emoji, un élément `#accueil` et un conteneur `#suggestions`, tous deux en dehors de `#messages`.
+- `public/js/view.js` affiche l'identité, l'accueil et les suggestions avec `textContent`, crée les boutons des suggestions, et étiquette les lignes avec le nom de `persona` au lieu de « Cap Web ».
+- `public/js/app.js` affiche l'accueil au démarrage, le masque au premier message envoyé, le réaffiche après l'effacement de la conversation, et place le texte d'une suggestion cliquée dans `#message` sans envoyer le formulaire.
+- `persona.js` est ajouté à la liste blanche et aux types autorisés de `server/app.js`.
 
 ## Questions ouvertes
 
