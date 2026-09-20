@@ -6,7 +6,6 @@ import { persona, validatePersona, compterEmojis } from '../public/js/persona.js
 // Tests rouges de l'identité Cavalier, critères 1 à 5 de SPEC.md.
 // Ils échouent tant que public/js/persona.js n'existe pas.
 
-const ACCUEIL_ATTENDU = 'Bonjour, je suis Cavalier, ton coach d’échecs pour débutants.';
 const ACCUEIL_SPEC = 'Bonjour, je suis Cavalier, ton coach d\'échecs pour débutants.';
 const SUGGESTIONS_ATTENDUES = [
   'Comment déplacer les pièces ?',
@@ -76,7 +75,6 @@ describe('Identité Cavalier — critère 2 (emoji)', () => {
 describe('Identité Cavalier — critère 3 (accueil)', () => {
   it('expose le texte d’accueil exact', () => {
     assert.equal(persona.accueil, ACCUEIL_SPEC);
-    assert.equal(ACCUEIL_ATTENDU.replace('’', '\''), ACCUEIL_SPEC);
   });
 
   it('refuse un accueil sans le nom Cavalier', () => {

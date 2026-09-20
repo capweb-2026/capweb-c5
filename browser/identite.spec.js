@@ -40,7 +40,7 @@ test.describe('Identité Cavalier — critère 3 (accueil)', () => {
     await pageNeuve(page);
     await expect(page.locator('#accueil')).toBeVisible();
     await expect(page.locator('#accueil')).toHaveText(
-      'Bonjour, je suis Cavalier, ton coach d’échecs pour débutants.',
+      'Bonjour, je suis Cavalier, ton coach d\'échecs pour débutants.',
     );
     await expect(lignes(page)).toHaveCount(0);
   });
