@@ -16,7 +16,7 @@ export function replyTo(message) {
   const texte = message.trim().toLowerCase();
 
   if (texte === 'salut' || texte === 'bonjour') {
-    return 'Salut ! Je suis Cap Web, ton assistant pour apprendre les échecs.';
+    return 'Salut ! Je suis Cavalier, ton assistant pour apprendre les échecs.';
   }
   if (texte === 'aide') {
     return 'Tu peux me dire « salut », « aide » ou « test » pour commencer.';
@@ -25,7 +25,7 @@ export function replyTo(message) {
     return 'Test reçu, tout fonctionne !';
   }
   if (texte === 'Tu es qui ?' || texte === 'qui es-tu ?') {
-    return 'Je suis Cap Web, ton assistant pour apprendre les échecs.';
+    return 'Je suis Cavalier, ton assistant pour apprendre les échecs.';
   }
   if (texte === 'Tu sais jouer aux échecs ?' || texte === 'sais-tu jouer aux échecs ?') {
     return 'Oui, je peux te donner des conseils et des astuces pour progresser aux échecs.';
