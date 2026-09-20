@@ -29,7 +29,7 @@ export function validateMessage(raw) {
 }
 
 export function replyTo(message) {
-    const texte = message.toLowerCase();
+    const texte = message.trim().toLowerCase();
 
     if (texte === 'bonjour' || texte === 'salut') {
         return "Bonjour je suis ton chat qui te guidera pour ton apprentissage des échecs"
