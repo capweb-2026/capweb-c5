@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 
 async function pageNeuve(page) {
   await page.goto('/');
-  await page.evaluate(() => localStorage.clear());
+  await page.evaluate(() => globalThis.localStorage.clear());
   await page.reload();
 }
 
