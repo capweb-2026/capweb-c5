@@ -4,7 +4,7 @@ Chaque ligne dit quelle connerie est arrêtée, par quoi, et **où est la preuve
 
 | Connerie | Barrière qui l'arrête | Preuve (lien) | Checkpoint |
 |---|---|---|---|
-| Régression | Tests de contrat et CI obligatoire sur `main` | | CP1 |
+| Régression | Tests de contrat et CI obligatoire sur `main` | https://github.com/capweb-2026/capweb-c5/actions/runs/34945648020 : premier run du dépôt sur `main`, rouge à l'étape `npm test` — le contrat a refusé un projet sans chatbot (`Cannot find module public/js/brain.js`, importé par `tests/contrat/brain.contrat.test.js`) | CP1 |
 | Test affaibli ou supprimé | `check:tests` (TEST-CHANGE obligatoire) et relecture | | CP2 |
 | Dépendance ajoutée | `check:deps` et `dependances-autorisees.json` | | CP2 |
 | Secret exposé | | | CP3 |
