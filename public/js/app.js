@@ -1,5 +1,5 @@
 import { validateMessage, replyTo } from './brain.js';
-import { renderMessages } from './view.js';
+import { renderMessages, afficherAccueil, afficherSuggestions } from './view.js';
 
 const formulaire = document.querySelector("#chat-form");
 const statut = document.querySelector("#status");
@@ -7,8 +7,23 @@ const versionElt = document.querySelector("#version");
 const champ = document.querySelector("#message");
 const liste = document.querySelector("#messages");
 const boutonEffacer = document.querySelector("#effacer");
+const accueilElt = document.querySelector("#accueil");
+const suggestionsElt = document.querySelector("#suggestions");
 const CLE_HISTORIQUE = "capweb.historique";
 const historique = [];
+
+function actualiserAccueil() {
+  if (accueilElt) {
+    afficherAccueil(accueilElt, historique.length === 0);
+  }
+}
+
+if (suggestionsElt && champ) {
+  afficherSuggestions(suggestionsElt, (texte) => {
+    champ.value = texte;
+    champ.focus();
+  });
+}
 
 function sauvegarder() {
   localStorage.setItem(CLE_HISTORIQUE, JSON.stringify(historique));
@@ -26,6 +41,7 @@ if (brut) {
     statut.textContent = "La conversation enregistrée était illisible, elle a été ignorée";
   }
 }
+actualiserAccueil();
 
 formulaire?.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -40,6 +56,7 @@ formulaire?.addEventListener("submit", (event) => {
   historique.push({ role: "user", text: resultat.value });
   historique.push({ role: "assistant", text: replyTo(resultat.value) });
   renderMessages(historique, liste);
+  actualiserAccueil();
   sauvegarder();
 
   champ.value = "";
@@ -54,6 +71,7 @@ boutonEffacer?.addEventListener("click", () => {
   historique.length = 0;
   localStorage.removeItem(CLE_HISTORIQUE);
   renderMessages(historique, liste);
+  actualiserAccueil();
 });
 
 // Version du serveur local, échec discret si indisponible.
